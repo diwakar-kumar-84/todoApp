@@ -5,21 +5,26 @@ import {
   CLEAR_COMPLETED,
 } from "./actionTypes";
 
-export const addTask = (text) => ({
+export const addTask = (text, id) => ({
+  id: id,
   type: ADD_TASK,
   text: text,
 });
-export const deleteTask = (text) => ({
+export const deleteTask = (id) => ({
   type: DELETE_TASK,
-  text: text,
+  id,
 });
 export const completeTask = (text) => ({
   type: COMPLETE_TASK,
-  text: text,
+  id,
 });
 export const clearCompletedTask = () => ({
   type: CLEAR_COMPLETED,
 });
 export const allComplete = () => ({
   type: ALL_COMPLETED,
+});
+export const localStorageData = (data) => ({
+  type: LOCAL_STOREAGE,
+  data: data,
 });

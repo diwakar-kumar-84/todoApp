@@ -7,27 +7,33 @@ import {
   DELETE_TASK,
   CLEAR_COMPLETED,
   ALL_COMPLETED,
+  LOCAL_STOREAGE,
 } from "./redux/action/actionTypes";
 
 function App() {
-  const [text, setText] = useState("");
+  const [text, setText] = useState();
   const [filterView, setFilterView] = useState(null);
 
   const handleComplete = (item) => {
-    dispatch({ type: COMPLETE_TASK, text: item });
-    localStorage.removeItem("data");
+    dispatch({ type: COMPLETE_TASK, id: item });
   };
   const handleDelete = (item) => {
-    dispatch({ type: DELETE_TASK, text: item });
+    if (todo.length === 1) {
+      localStorage.setItem("data", JSON.stringify([]));
+    }
+    dispatch({ type: DELETE_TASK, id: item });
   };
 
   const handleClick = () => {
-    if (text !== "") {
-      console.log("clicked");
-      console.log(text);
-      dispatch({ type: ADD_TASK, text: text });
+    // console.log(text.length);
+    if (text !== undefined) {
+      if (text.trim() !== "") {
+        console.log("clicked");
+        console.log(text);
+        dispatch({ type: ADD_TASK, text: text, id: Date.now() });
+      }
     }
-    localStorage.setItem("data", text);
+
     setText("");
   };
   const filterList = (data) => {
@@ -48,10 +54,39 @@ function App() {
 
   const dispatch = useDispatch();
   const todo = useSelector((state) => state);
+
+  useEffect(() => {
+    console.log(todo.length);
+    if (todo.length !== 0) {
+      localStorage.setItem("data", JSON.stringify(todo));
+    }
+    return () => {
+      // cleanup;
+      // localStorage.setItem("data", JSON.stringify(todo));
+    };
+  }, [todo]);
+
+  useEffect(() => {
+    console.log(localStorage.getItem("data").length);
+
+    if (localStorage.getItem("data").length !== 2) {
+      if (todo.length === 0 || localStorage.getItem("data").length !== 2) {
+        dispatch({
+          type: LOCAL_STOREAGE,
+          data: JSON.parse(localStorage.getItem("data")),
+        });
+      }
+    }
+  }, []);
+
+  const List =
+    filterView === null
+      ? todo
+      : todo.filter((item) => item.completed === filterView);
   return (
     <div className="App">
       {console.log(todo)}
-      {/* {localStorage.setItem("data", JSON.stringify(todo))} */}
+
       {/* Add task code */}
       <input
         name="task"
@@ -69,71 +104,66 @@ function App() {
       {/* Display Tasks */}
       <div>
         <input type="radio" onClick={() => allCompleted()} />
-        {filterView === null
-          ? todo &&
-            todo.map((items, index) => {
-              return (
-                <div
-                  key={index}
+        {List &&
+          List.map((items, index) => {
+            return (
+              <div
+                key={index}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <li
+                  onClick={() => handleComplete(items.id)}
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    color: items.completed === true ? "green" : null,
                   }}
                 >
-                  <li onClick={() => handleComplete(items.text)}>
-                    {items.text}
-                  </li>
-                  <span
-                    style={{ marginLeft: "100px" }}
-                    onClick={() => handleDelete(items.text)}
-                  >
-                    x
-                  </span>
-                </div>
-              );
-            })
-          : todo &&
-            todo
-              .filter((i) => i.completed === filterView)
-              .map((items, index) => {
-                return (
-                  <div
-                    key={index}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <li onClick={() => handleComplete(items.text)}>
-                      {items.text}
-                    </li>
-                    <span
-                      style={{ marginLeft: "100px" }}
-                      onClick={() => handleDelete(items.text)}
-                    >
-                      x
-                    </span>
-                  </div>
-                );
-              })}
+                  {items.text}
+                </li>
+                <span
+                  style={{ marginLeft: "100px" }}
+                  onClick={() => handleDelete(items.id)}
+                >
+                  x
+                </span>
+              </div>
+            );
+          })}
+        <div>
+          {todo.filter((item) => item.completed === false).length} Item Left
+        </div>
       </div>
+
       <div>
         <button
-          style={{ padding: "8px", margin: "5px" }}
+          style={{
+            padding: "8px",
+            margin: "5px",
+            backgroundColor: filterView === null ? "blue" : null,
+          }}
           onClick={() => filterList("all")}
         >
           All
         </button>
         <button
-          style={{ padding: "8px", margin: "5px" }}
+          style={{
+            padding: "8px",
+            margin: "5px",
+            backgroundColor: filterView === false ? "blue" : null,
+          }}
           onClick={() => filterList("active")}
         >
           Active
         </button>
         <button
-          style={{ padding: "8px", margin: "5px" }}
+          style={{
+            padding: "8px",
+            margin: "5px",
+            backgroundColor: filterView === true ? "blue" : null,
+          }}
           onClick={() => filterList("completed")}
         >
           completed

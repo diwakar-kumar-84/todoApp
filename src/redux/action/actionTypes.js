@@ -3,3 +3,4 @@ export const DELETE_TASK = "DELETE_TASK";
 export const COMPLETE_TASK = "COMPLETE_TASK";
 export const CLEAR_COMPLETED = "CLEAR_COMPLETE";
 export const ALL_COMPLETED = "ALL_COMPLETED";
+export const LOCAL_STOREAGE = "LOCAL_STOREAGE";
