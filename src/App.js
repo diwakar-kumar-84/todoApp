@@ -69,7 +69,11 @@ function App() {
   }, [todo]);
 
   useEffect(() => {
-    console.log(localStorage.getItem("data").length);
+    // console.log(localStorage.getItem("data") === null);
+
+    if (localStorage.getItem("data") === null) {
+      localStorage.setItem("data", JSON.stringify([]));
+    }
 
     if (localStorage.getItem("data").length !== 2) {
       if (todo.length === 0 || localStorage.getItem("data").length !== 2) {
