@@ -16,6 +16,7 @@ function App() {
 
   const handleComplete = (item) => {
     dispatch({ type: COMPLETE_TASK, id: item });
+    //     localStorage.removeItem("data");
   };
   const handleDelete = (item) => {
     if (todo.length === 1) {
@@ -34,6 +35,7 @@ function App() {
       }
     }
 
+    //     localStorage.setItem("data", text);
     setText("");
   };
   const filterList = (data) => {
