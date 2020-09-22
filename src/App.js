@@ -15,7 +15,7 @@ function App() {
 
   const handleComplete = (item) => {
     dispatch({ type: COMPLETE_TASK, text: item });
-    localStorage.removeItem("data");
+//     localStorage.removeItem("data");
   };
   const handleDelete = (item) => {
     dispatch({ type: DELETE_TASK, text: item });
@@ -27,7 +27,7 @@ function App() {
       console.log(text);
       dispatch({ type: ADD_TASK, text: text });
     }
-    localStorage.setItem("data", text);
+//     localStorage.setItem("data", text);
     setText("");
   };
   const filterList = (data) => {
